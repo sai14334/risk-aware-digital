@@ -10,6 +10,8 @@ import { Lang } from "@/lib/translations";
 import translations from "@/lib/translations";
 import Layout from "@/components/Layout";
 
+const DEFAULT_API_BASE = "https://m2pc2m1j-8000.inc1.devtunnels.ms";
+
 const ReportFraudPage = () => {
   const [lang, setLang] = useState<Lang>(() => {
     const saved = localStorage.getItem("gramrakshak-lang");
@@ -17,7 +19,17 @@ const ReportFraudPage = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Form field states
+  const [fraudType, setFraudType] = useState("");
+  const [description, setDescription] = useState("");
+  const [evidence, setEvidence] = useState<File | null>(null);
+  const [urgency, setUrgency] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [contact, setContact] = useState("");
 
   const toggleLang = useCallback(() => {
     setLang((prev) => {
@@ -29,9 +41,56 @@ const ReportFraudPage = () => {
 
   const t = translations[lang];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("fraudType", fraudType);
+      formData.append("description", description);
+      formData.append("urgency", urgency);
+      formData.append("anonymous", String(anonymous));
+      
+      if (evidence) {
+        formData.append("evidence", evidence);
+      }
+      
+      if (!anonymous) {
+        formData.append("fullName", fullName);
+        formData.append("contact", contact);
+      }
+
+      const base = import.meta.env.VITE_API_URL || DEFAULT_API_BASE;
+      const url = `${base}/api/reports/submit-fraud`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Failed to submit report: ${response.status}`);
+      }
+
+      setSubmitted(true);
+      // Reset form
+      setFraudType("");
+      setDescription("");
+      setEvidence(null);
+      setUrgency("");
+      setAnonymous(false);
+      setFullName("");
+      setContact("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Report submission error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,6 +121,13 @@ const ReportFraudPage = () => {
           </div>
         </div>
 
+        {/* ❌ Error Message */}
+        {error && (
+          <div className="bg-red-100 border border-red-300 p-4 rounded-lg text-red-800 text-sm">
+            {error}
+          </div>
+        )}
+
         {/* ✅ Success Message */}
         {submitted ? (
           <div className="bg-green-100 border border-green-300 p-6 rounded-xl text-center space-y-4">
@@ -86,7 +152,12 @@ const ReportFraudPage = () => {
             <label className="block text-sm font-semibold mb-2">
               {t.fraudCategoryLabel}
             </label>
-            <select className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none">
+            <select 
+              value={fraudType}
+              onChange={(e) => setFraudType(e.target.value)}
+              required
+              className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none">
+              <option value="">Select a category</option>
               {t.fraudOptions.map((opt) => (
                 <option key={opt}>{opt}</option>
               ))}
@@ -99,6 +170,8 @@ const ReportFraudPage = () => {
               {t.describeLabel}
             </label>
             <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={5}
               required
               placeholder={t.descriptionPlaceholder}
@@ -113,7 +186,11 @@ const ReportFraudPage = () => {
             </label>
             <div className="flex items-center gap-3 border border-dashed border-input p-4 rounded-lg">
               <Upload size={20} className="text-muted-foreground" />
-              <input type="file" className="text-sm" />
+              <input 
+                type="file" 
+                onChange={(e) => setEvidence(e.target.files?.[0] || null)}
+                className="text-sm" 
+              />
             </div>
           </div>
 
@@ -122,7 +199,12 @@ const ReportFraudPage = () => {
             <label className="block text-sm font-semibold mb-2">
               {t.urgencyLabel}
             </label>
-            <select className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none">
+            <select 
+              value={urgency}
+              onChange={(e) => setUrgency(e.target.value)}
+              required
+              className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none">
+              <option value="">Select urgency</option>
               {t.urgencyOptions.map((u) => (
                 <option key={u}>{u}</option>
               ))}
@@ -150,6 +232,8 @@ const ReportFraudPage = () => {
                 </label>
                 <input
                   type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   required
                   className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none"
                 />
@@ -161,6 +245,8 @@ const ReportFraudPage = () => {
                 </label>
                 <input
                   type="text"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
                   required
                   className="w-full border border-input rounded-lg p-3 bg-background focus:ring-2 focus:ring-primary/40 outline-none"
                 />
@@ -171,10 +257,11 @@ const ReportFraudPage = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={18} />
-            {t.submitReportButton}
+            {isLoading ? "Submitting..." : t.submitReportButton}
           </button>
 
         </form>
