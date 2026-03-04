@@ -30,13 +30,20 @@ const ResultsSection = ({ result, originalMessage, lang }: ResultsSectionProps) 
 
   // Highlight keywords in message
   const highlightMessage = () => {
-    if (result.keywords.length === 0) return originalMessage;
+    // filter and ensure keywords are strings only
+    const stringKeywords = result.keywords
+      .filter((k): k is string => typeof k === "string" && k.length > 0);
+    
+    if (stringKeywords.length === 0) return originalMessage;
 
-    const regex = new RegExp(`(${result.keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})`, "gi");
+    const regex = new RegExp(
+      `(${stringKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})`,
+      "gi"
+    );
     const parts = originalMessage.split(regex);
 
     return parts.map((part, i) => {
-      const isKeyword = result.keywords.some(k => k.toLowerCase() === part.toLowerCase());
+      const isKeyword = stringKeywords.some(k => k.toLowerCase() === part.toLowerCase());
       return isKeyword ? (
         <span key={i} className="rounded bg-danger/15 px-1 font-semibold text-danger">{part}</span>
       ) : (
@@ -99,6 +106,62 @@ const ResultsSection = ({ result, originalMessage, lang }: ResultsSectionProps) 
           </div>
         </div>
       </div>
+
+      {/* Additional data from remote API */}
+      {(result.spam_score !== undefined ||
+        result.fraud_confidence !== undefined ||
+        result.risk_level ||
+        (result.entities_detected && result.entities_detected.length > 0) ||
+        result.timestamp) && (
+        <div className="govt-card animate-fade-up-delay-2">
+          <p className="mb-2 text-sm font-semibold text-muted-foreground">{t.serverDetails}</p>
+          <div className="text-sm text-foreground space-y-1">
+            {result.spam_score !== undefined && (
+              <div>
+                {t.spamScore}: {result.spam_score.toFixed(2)}
+              </div>
+            )}
+            {result.fraud_confidence !== undefined && (
+              <div>
+                {t.fraudConfidence}: {result.fraud_confidence}
+              </div>
+            )}
+            {result.risk_level && (
+              <div>
+                {t.riskLevel}: {result.risk_level}
+              </div>
+            )}
+            {result.entities_detected && result.entities_detected.length > 0 && (
+              <div>
+                {t.entitiesDetected}: {result.entities_detected.join(", ")}
+              </div>
+            )}
+            {result.timestamp && (
+              <div>
+                {t.analysisTimestamp}: {new Date(result.timestamp).toLocaleString()}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {result.reasoning && result.reasoning.length > 0 && (
+        <div className="govt-card animate-fade-up-delay-3">
+          <p className="mb-1 text-sm font-semibold text-foreground">{t.reasoningTitle}</p>
+          <ul className="list-disc pl-5 text-sm text-muted-foreground">
+            {result.reasoning.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {result.safety_advice && (
+        <div className="govt-card animate-fade-up-delay-3">
+          <p className="mb-1 text-sm font-semibold text-foreground">{t.safetyAdvice}</p>
+          <p className="text-sm text-muted-foreground">{result.safety_advice}</p>
+        </div>
+      )}
 
       {/* Preventive Guidance */}
       <div className="govt-card animate-fade-up-delay-3 border-l-4 border-l-primary">

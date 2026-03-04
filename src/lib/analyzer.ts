@@ -41,11 +41,24 @@ const suspiciousIndicators = [
 ];
 
 export interface AnalysisResult {
+  // basic fields used by the local analyzer
   score: number;
   classification: "safe" | "suspicious" | "highRisk";
   fraudType: string;
   keywords: string[];
   explanation: string;
+
+  // additional values the remote API may return
+  message?: string;
+  spam_score?: number;
+  fraud_confidence?: number;
+  risk_score?: number;
+  risk_level?: string;
+  entities_detected?: unknown[];
+  reasoning?: string[];
+  safety_advice?: string;
+  helpline?: string;
+  timestamp?: string;
 }
 
 export function analyzeMessage(message: string): AnalysisResult {
@@ -110,5 +123,16 @@ export function analyzeMessage(message: string): AnalysisResult {
     fraudType,
     keywords: [...new Set(foundKeywords)],
     explanation: explanationParts.join(" "),
+
+    // leave the remote-specific fields undefined when running locally
+    spam_score: undefined,
+    fraud_confidence: undefined,
+    risk_score: undefined,
+    risk_level: undefined,
+    entities_detected: undefined,
+    reasoning: undefined,
+    safety_advice: undefined,
+    helpline: undefined,
+    timestamp: undefined,
   };
 }

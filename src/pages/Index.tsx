@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import Header from "@/components/Header";
+import Layout from "@/components/Layout";
 import MessageInput from "@/components/MessageInput";
 import ResultsSection from "@/components/ResultsSection";
-import Footer from "@/components/Footer";
 import { analyzeMessage, AnalysisResult } from "@/lib/analyzer";
+import { analyzeRemote } from "@/lib/api";
 import { Lang } from "@/lib/translations";
 
 const Index = () => {
@@ -11,6 +11,7 @@ const Index = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [originalMessage, setOriginalMessage] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleLang = useCallback(() => {
     setLang((prev) => (prev === "en" ? "te" : "en"));
@@ -20,29 +21,43 @@ const Index = () => {
     setIsAnalyzing(true);
     setResult(null);
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const analysisResult = analyzeMessage(message);
-      setResult(analysisResult);
-      setOriginalMessage(message);
-      setIsAnalyzing(false);
-    }, 1200);
+    // try remote first, fall back to the local analyzer if something
+    // goes wrong (network failure, server error, etc.).
+    setError(null);
+    analyzeRemote(message)
+      .then((analysisResult) => {
+        setResult(analysisResult);
+        setOriginalMessage(message);
+      })
+      .catch((err) => {
+        console.warn("remote analyze failed", err);
+        setError("Remote request failed; using local analysis instead.");
+        // remote call failed; keep showing the fake delay so the UI
+        // doesn't feel like it immediately gave up.
+        setTimeout(() => {
+          const analysisResult = analyzeMessage(message);
+          setResult(analysisResult);
+          setOriginalMessage(message);
+        }, 1200);
+      })
+      .finally(() => {
+        setIsAnalyzing(false);
+      });
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header lang={lang} onToggleLang={toggleLang} />
-
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 space-y-6">
+    <Layout lang={lang} onToggleLang={toggleLang}>
+      <div className="mx-auto w-full max-w-3xl px-4 py-8 space-y-6">
         <MessageInput lang={lang} onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+        {error && (
+          <p className="mt-2 text-sm text-danger">{error}</p>
+        )}
 
         {result && (
           <ResultsSection result={result} originalMessage={originalMessage} lang={lang} />
         )}
-      </main>
-
-      <Footer lang={lang} />
-    </div>
+      </div>
+    </Layout>
   );
 };
 
