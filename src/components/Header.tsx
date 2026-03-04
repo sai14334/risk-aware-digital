@@ -1,5 +1,6 @@
 import {
   ShieldCheck,
+  ShieldAlert,
   Globe,
   Menu,
   HelpCircle,
@@ -74,7 +75,8 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
             title="Report Cybercrime"
             className="inline-flex items-center justify-center rounded-md bg-danger p-2 text-danger-foreground hover:opacity-95"
           >
-            <ExternalLink size={18} />
+            <ShieldAlert size={18} />
+  
           </a>
 
           {/* Language Toggle */}
@@ -101,7 +103,7 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
 
                   <button
                     onClick={() => handleMenuClick("/faq")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/50 transition"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition"
                   >
                     <HelpCircle size={16} />
                     FAQs
@@ -109,7 +111,7 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
 
                   <button
                     onClick={() => handleMenuClick("/reporting-guide")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/50 transition"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition"
                   >
                     <HelpCircle size={16} />
                     Reporting Guide
@@ -117,7 +119,7 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
 
                   <button
                     onClick={() => handleMenuClick("/about")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/50 transition"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition"
                   >
                     <HelpCircle size={16} />
                     About

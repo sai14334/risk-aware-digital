@@ -1,76 +1,69 @@
-import { useEffect, useState, useRef } from "react";
+"use client";
+import { useEffect, useState } from "react";
 
-interface Slide {
-  title?: string;
-  subtitle?: string;
-  image?: string; // optional image url
-}
+const slides = [
+  {
+    title: "Phishing Email Scam",
+    description:
+      "Fraudsters send fake emails pretending to be banks. Never click unknown links.",
+  },
+  {
+    title: "OTP Sharing Fraud",
+    description:
+      "Banks never ask for your OTP. Sharing OTP can empty your account instantly.",
+  },
+  {
+    title: "Fake Job Offers",
+    description:
+      "Scammers ask for registration fees for fake jobs. Genuine companies never charge money.",
+  },
+  {
+    title: "Loan App Harassment",
+    description:
+      "Avoid downloading unknown loan apps. They misuse personal data and threaten users.",
+  },
+];
 
-interface CarouselProps {
-  slides: Slide[];
-  autoplay?: boolean;
-  interval?: number;
-}
+export default function CarouselSection() {
+  const [current, setCurrent] = useState(0);
 
-const Carousel = ({ slides, autoplay = true, interval = 4000 }: CarouselProps) => {
-  const [idx, setIdx] = useState(0);
-  const count = slides.length;
-  const timer = useRef<number | null>(null);
-
+  // Auto slide every 4 seconds
   useEffect(() => {
-    if (!autoplay || count <= 1) return;
-    timer.current = window.setInterval(() => {
-      setIdx((i) => (i + 1) % count);
-    }, interval);
-    return () => { if (timer.current) window.clearInterval(timer.current); };
-  }, [autoplay, interval, count]);
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 4000);
 
-  const prev = () => setIdx((i) => (i - 1 + count) % count);
-  const next = () => setIdx((i) => (i + 1) % count);
-
-  if (count === 0) return null;
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="govt-card relative overflow-hidden">
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-sm font-semibold">Highlights</div>
-        <div className="flex items-center gap-2">
-          <button onClick={prev} className="rounded px-2 py-1 hover:bg-muted/50">Prev</button>
-          <button onClick={next} className="rounded px-2 py-1 hover:bg-muted/50">Next</button>
+    <section className="bg-blue-50 py-20">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="relative bg-white rounded-2xl shadow-lg p-10 transition-all duration-700 ease-in-out">
+          <h2 className="text-2xl font-semibold text-blue-700 mb-4">
+            {slides[current].title}
+          </h2>
+
+          <p className="text-gray-600 text-lg">
+            {slides[current].description}
+          </p>
+        </div>
+
+        {/* Dots */}
+        <div className="flex justify-center mt-6 gap-3">
+          {slides.map((_, index) => (
+            <div
+              key={index}
+              onClick={() => setCurrent(index)}
+              className={`h-3 w-3 rounded-full cursor-pointer transition-all ${
+                current === index
+                  ? "bg-blue-600 scale-110"
+                  : "bg-blue-200"
+              }`}
+            />
+          ))}
         </div>
       </div>
-
-      <div className="w-full h-44 sm:h-56 relative">
-        {slides.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute inset-0 transition-all duration-500 ${i === idx ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"}`}
-          >
-            <div className="h-full w-full flex flex-col sm:flex-row items-center gap-4 p-4">
-              {s.image && (
-                <div className="hidden sm:block w-40 h-28 bg-cover bg-center rounded" style={{ backgroundImage: `url(${s.image})` }} />
-              )}
-              <div className="flex-1">
-                {s.title && <div className="text-lg font-bold text-foreground">{s.title}</div>}
-                {s.subtitle && <div className="text-sm text-muted-foreground mt-1">{s.subtitle}</div>}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-center gap-2 mt-3">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Go to slide ${i + 1}`}
-            onClick={() => setIdx(i)}
-            className={`w-2 h-2 rounded-full ${i === idx ? "bg-foreground" : "bg-muted"}`}
-          />
-        ))}
-      </div>
-    </div>
+    </section>
   );
-};
-
-export default Carousel;
+}
