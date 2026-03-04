@@ -73,7 +73,8 @@ const Index = () => {
     setErrorInfo(null);
     setLastMessage(`[image] ${file.name}`);
 
-    const base = import.meta.env.VITE_API_URL || "http://localhost:8080";
+    // use the tunnel backend URL by default (no localhost calls)
+    const base = import.meta.env.VITE_API_URL || "https://m2pc2m1j-8000.inc1.devtunnels.ms";
     const url = `${base}/api/analyze-image`;
 
     const form = new FormData();
