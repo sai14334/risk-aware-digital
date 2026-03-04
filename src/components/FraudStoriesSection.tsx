@@ -24,47 +24,45 @@ const fraudStories = [
   },
 ];
 
-
-
 const FraudStoriesSection = () => {
   return (
-    <section className="py-16 px-6 bg-blue-50/40">
+    <section className="pt-6 pb-10 px-6 bg-blue-50/40">
       {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="flex justify-center mb-4">
+      <div className="text-center max-w-2xl mx-auto mb-6">
+        <div className="flex justify-center mb-2">
           {/* Soft blue icon */}
-          <div className="bg-blue-100 p-4 rounded-full">
-            <ShieldAlert className="text-blue-600" size={32} />
+          <div className="bg-blue-100 p-3 rounded-full">
+            <ShieldAlert className="text-blue-600" size={28} />
           </div>
         </div>
 
-        <h2 className="text-3xl font-bold mb-4 text-foreground">
+        <h2 className="text-2xl font-bold mb-2 text-foreground">
           Real Fraud Stories
         </h2>
 
-        <p className="text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Learn from real-life cyber fraud cases to protect yourself and your
           loved ones from digital threats.
         </p>
       </div>
 
       {/* Stories Grid */}
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
         {fraudStories.map((story) => (
           <div
             key={story.id}
-            className="bg-card rounded-2xl border border-border p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            className="bg-card rounded-xl border border-border p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
           >
             {/* Soft Blue Badge */}
-            <span className="inline-block text-xs font-medium bg-blue-100 text-blue-600 px-3 py-1 rounded-full mb-4">
+            <span className="inline-block text-xs font-medium bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full mb-2">
               {story.category}
             </span>
 
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-base font-semibold mb-1">
               {story.title}
             </h3>
 
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-sm text-muted-foreground mb-3 leading-snug">
               {story.description}
             </p>
 
@@ -77,6 +75,5 @@ const FraudStoriesSection = () => {
     </section>
   );
 };
-
 
 export default FraudStoriesSection;

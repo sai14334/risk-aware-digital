@@ -79,18 +79,25 @@ const Header = ({ lang, onToggleLang, onAnalyzeClick }: HeaderProps) => {
               if (onAnalyzeClick) {
                 onAnalyzeClick();
               } else {
-                navigate("/history");
+                navigate("/analyze");
               }
             }}
             className="transition hover:opacity-80"
           >
             Analyze
           </button>
-          <button onClick={() => navigate("/statistics")} className="transition hover:opacity-80">
+          <button
+            onClick={() => {
+              navigate("/statistics");
+              // notify stats page to refresh if already mounted
+              window.dispatchEvent(new Event('refreshStats'));
+            }}
+            className="transition hover:opacity-80"
+          >
             Stats
           </button>
-          <button onClick={() => navigate("/contact")} className="transition hover:opacity-80">
-            Contact
+          <button onClick={() => navigate("/faq")} className="transition hover:opacity-80">
+            FAQs
           </button>
         </div>
 

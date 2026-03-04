@@ -43,6 +43,10 @@ const StatisticsPage = () => {
     };
 
     fetchStats();
+
+    const listener = () => fetchStats();
+    window.addEventListener('refreshStats', listener);
+    return () => window.removeEventListener('refreshStats', listener);
   }, []);
 
   return (

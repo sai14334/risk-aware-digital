@@ -78,7 +78,7 @@ const MessageInput = ({ lang, message, onMessageChange, onAnalyze, onAnalyzeFile
           {message.length}/{maxChars} {t.characters}
         </span>
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             onClick={handleMicClick}
             disabled={isAnalyzing}
             className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
@@ -89,7 +89,7 @@ const MessageInput = ({ lang, message, onMessageChange, onAnalyze, onAnalyzeFile
             title="Mic input"
           >
             <Mic size={16} />
-          </button>
+          </button> */}
           <button
             onClick={handleFileClick}
             disabled={isAnalyzing}
