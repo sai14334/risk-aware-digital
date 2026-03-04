@@ -1,4 +1,4 @@
-import { ShieldCheck, Globe, Menu, HelpCircle } from "lucide-react";
+import { ShieldCheck, Globe, Menu, HelpCircle, ExternalLink } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lang } from "@/lib/translations";
@@ -41,12 +41,28 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
       <div className="relative mx-auto max-w-4xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-2xl bg-primary-foreground/15 p-2">
-              <ShieldCheck size={32} strokeWidth={1.8} />
-            </div>
-            <span className="text-lg font-semibold text-primary-foreground">GramRakshak</span>
+            <button
+              onClick={() => navigate("/")}
+              aria-label="Home"
+              className="flex items-center gap-2 bg-transparent p-0 m-0 focus:outline-none"
+            >
+              <div className="rounded-2xl bg-primary-foreground/15 p-2">
+                <ShieldCheck size={32} strokeWidth={1.8} />
+              </div>
+              <span className="text-lg font-semibold text-primary-foreground">GramRakshak</span>
+            </button>
           </div>
           <div className="flex items-center gap-2">
+            <a
+              href="https://cybercrime.gov.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Report Cybercrime (opens in new tab)"
+              className="inline-flex items-center justify-center rounded-md bg-danger p-2 text-danger-foreground hover:opacity-95"
+              aria-label="Report Cybercrime"
+            >
+              <ExternalLink size={18} />
+            </a>
             <button
               onClick={onToggleLang}
               className="flex items-center gap-1.5 rounded-lg border border-primary-foreground/30 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-primary-foreground/10"
@@ -65,14 +81,21 @@ const Header = ({ lang, onToggleLang }: HeaderProps) => {
               {isMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 rounded-lg bg-card border border-input shadow-lg z-50 animate-in fade-in">
                   <div className="py-2">
-                    <button
-                      onClick={() => handleMenuClick("/faq")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors"
-                    >
-                      <HelpCircle size={16} />
-                      FAQs
-                    </button>
-                  </div>
+                        <button
+                          onClick={() => handleMenuClick("/faq")}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                        >
+                          <HelpCircle size={16} />
+                          FAQs
+                        </button>
+                        <button
+                          onClick={() => handleMenuClick("/reporting-guide")}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                        >
+                          <HelpCircle size={16} />
+                          Live Cybercrime Reporting Guide
+                        </button>
+                      </div>
                 </div>
               )}
             </div>
