@@ -59,6 +59,23 @@
   }
 }
 
+/* ── Google Translate UI overrides ─────────────────────────────────────────
+   Hide the floating banner GT injects at the top of the page so our own
+   LanguagePicker is the only UI the user sees.
+─────────────────────────────────────────────────────────────────────────── */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-te-menu-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important; /* GT shifts body down by ~40px; undo that */
+}
+.skiptranslate {
+  display: none !important;
+}
+
 @layer base {
   * {
     @apply border-border;

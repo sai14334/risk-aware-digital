@@ -1,15 +1,14 @@
 import {
   ShieldCheck,
   ShieldAlert,
-  Globe,
   Menu,
   HelpCircle,
-  ExternalLink,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Lang } from "@/lib/translations";
 import translations from "@/lib/translations";
+import LanguagePicker from "@/components/LanguagePicker";
 
 interface HeaderProps {
   lang: Lang;
@@ -117,14 +116,8 @@ const Header = ({ lang, onToggleLang, onAnalyzeClick }: HeaderProps) => {
   
           </a>
 
-          {/* Language Toggle */}
-          <button
-            onClick={onToggleLang}
-            className="flex items-center gap-1.5 rounded-lg border border-primary-foreground/30 px-3 py-1.5 text-sm font-medium transition hover:bg-primary-foreground/10"
-          >
-            <Globe size={14} />
-            {t.langToggle}
-          </button>
+          {/* Language Picker — multi-language via Google Translate */}
+          <LanguagePicker />
 
           {/* Menu Dropdown */}
           <div
