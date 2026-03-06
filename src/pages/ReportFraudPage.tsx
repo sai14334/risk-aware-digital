@@ -9,6 +9,7 @@ import {
 import { Lang } from "@/lib/translations";
 import translations from "@/lib/translations";
 import Layout from "@/components/Layout";
+import { Link } from "react-router-dom";
 
 const DEFAULT_API_BASE = "https://m2pc2m1j-8000.inc1.devtunnels.ms";
 
@@ -110,6 +111,14 @@ const ReportFraudPage = () => {
           <p className="text-muted-foreground max-w-xl mx-auto">
             {t.reportSubtitle}
           </p>
+          <div>
+            <Link
+              to="/reporting-guide"
+              className="inline-flex items-center rounded-md border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              View Reporting Guide
+            </Link>
+          </div>
         </div>
 
         {/* 🔒 Security Notice */}

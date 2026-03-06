@@ -101,7 +101,7 @@ const AwarenessPage = () => {
 
             <div
               key={topic.id}
-              className="group border rounded-xl p-6 bg-white shadow-sm hover:shadow-xl transition duration-300"
+              className="group border rounded-xl p-6 bg-white shadow-sm hover:shadow-xl transition duration-300 flex flex-col h-full"
             >
 
               {/* Icon */}
@@ -132,7 +132,7 @@ const AwarenessPage = () => {
               {/* CTA */}
               <button
                 onClick={() => (window.location.href = "/report")}
-                className="flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
+                className="mt-auto inline-flex w-fit items-center gap-2 rounded-md border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 Report Similar Fraud
                 <ArrowRight size={16} />
